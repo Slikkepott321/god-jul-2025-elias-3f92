@@ -43,15 +43,19 @@ Passord: Slikkepott123
 
 Endre admin-brukernavn og passord i `ADMIN_CREDENTIALS` øverst i `script.js`.
 
-Kalenderlenker lagres lokalt i nettleseren med `localStorage`. For å slette alle lagrede luker, åpne DevTools Console i nettleseren og kjør:
+Kalenderlenker og admin-inbox lagres lokalt i nettleseren med `localStorage`.
+Dette er gratis og frontend-only, men det betyr at data ikke synkroniseres mellom ulike brukere eller ulike nettlesere.
+
+For å slette alle lagrede luker, åpne DevTools Console i nettleseren og kjør:
 
 ```js
 localStorage.removeItem("eliasJulekalenderDoors");
 location.reload();
 ```
 
-E-post sendes med en gratis `mailto:`-lenke til:
+For å slette alle lokale inbox-innsendinger, kjør:
 
-```text
-elias.dinneboss@gmail.com
+```js
+localStorage.removeItem("eliasJulekalenderSubmissions");
+location.reload();
 ```

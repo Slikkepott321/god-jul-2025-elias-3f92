@@ -217,6 +217,12 @@ button:disabled {
   backdrop-filter: blur(12px);
 }
 
+.inbox-trigger {
+  border-color: rgba(245, 191, 66, 0.72);
+  color: #3b1704;
+  background: linear-gradient(135deg, #fff6c9, var(--gold));
+}
+
 .admin-active .admin-trigger {
   color: #3b1704;
   background: linear-gradient(135deg, #fff0a8, var(--gold));
@@ -431,7 +437,7 @@ button:disabled {
 
 .section-heading {
   max-width: 760px;
-  margin-bottom: 1.4rem;
+  margin:-bottom: 1.4rem;
 }
 
 .section-heading h2 {
@@ -542,7 +548,7 @@ button:disabled {
   border: 1px solid rgba(255, 255, 255, 0.58);
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.44), rgba(255, 248, 231, 0.44)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.44), rgba(255, 248, 231, 0.44),
     repeating-linear-gradient(45deg, transparent 0 18px, rgba(245, 191, 66, 0.07) 18px 30px);
   box-shadow: 0 22px 60px rgba(60, 9, 19, 0.12);
 }
@@ -819,17 +825,17 @@ button:disabled {
   line-height: 1.65;
 }
 
-.mail-form {
+.submission-form {
   display: grid;
   gap: 0.55rem;
 }
 
-.mail-form label {
+.submission-form label {
   font-weight: 800;
 }
 
-.mail-form input,
-.mail-form textarea {
+.submission-form input,
+.submission-form textarea {
   width: 100%;
   border: 1px solid rgba(31, 23, 23, 0.16);
   border-radius: var(--radius);
@@ -838,7 +844,7 @@ button:disabled {
   background: rgba(255, 255, 255, 0.88);
 }
 
-.mail-form textarea {
+.submission-form textarea {
   resize: vertical;
 }
 
@@ -997,6 +1003,8 @@ button:disabled {
 .modal-card {
   position: relative;
   width: min(100%, 480px);
+  max-height: min(88vh, 820px);
+  overflow: auto;
   padding: 1.25rem;
   border: 1px solid rgba(255, 255, 255, 0.64);
   border-radius: var(--radius);
@@ -1086,15 +1094,154 @@ button:disabled {
   font-weight: 850;
 }
 
+.ghost-button.compact {
+  width: auto;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.82rem;
+}
+
 .ghost-button.danger {
   color: #9f1239;
   background: rgba(255, 238, 241, 0.88);
+}
+
+.inbox-open-button {
+  margin-top: 0.8rem;
 }
 
 .logout-button {
   margin-top: 0.8rem;
   color: white;
   background: linear-gradient(135deg, #7f1d1d, #4c0519);
+}
+
+.inbox-card {
+  width: min(100%, 760px);
+}
+
+.inbox-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.9rem;
+  padding: 0.7rem;
+  border: 1px solid rgba(31, 23, 23, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.inbox-count {
+  color: var(--deep-green);
+  font-weight: 900;
+}
+
+.inbox-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.inbox-item,
+.inbox-empty {
+  border: 1px solid rgba(114, 28, 28, 0.14);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 231, 0.84)),
+    radial-gradient(circle at 96% 0%, rgba(245, 191, 66, 0.22), transparent 11rem);
+  box-shadow: 0 12px 30px rgba(80, 16, 20, 0.08);
+}
+
+.inbox-item {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+
+.inbox-empty {
+  padding: 1rem;
+}
+
+.inbox-empty strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.inbox-empty p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.inbox-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.inbox-item-header strong,
+.inbox-item-header span {
+  display: block;
+}
+
+.inbox-item-header strong {
+  font-size: 1.02rem;
+}
+
+.inbox-item-header span {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
+.inbox-idea {
+  margin: 0;
+  padding: 0.85rem;
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.inbox-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.inbox-meta div {
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid rgba(15, 107, 58, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.inbox-meta dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.inbox-meta dd {
+  margin: 0.25rem 0 0;
+  overflow-wrap: anywhere;
+  font-weight: 850;
+}
+
+.inbox-comment {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .toast {
@@ -1137,6 +1284,10 @@ button:disabled {
 
   .calendar-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .inbox-meta {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1186,6 +1337,16 @@ button:disabled {
 
   .calendar-door {
     min-height: 9.5rem;
+  }
+
+  .inbox-toolbar,
+  .inbox-item-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ghost-button.compact {
+    width: 100%;
   }
 }
 

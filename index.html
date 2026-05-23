@@ -23,6 +23,9 @@
         <div class="nav-actions">
           <a class="nav-link" href="#challenge">Innsending</a>
           <a class="nav-link" href="#calendar">Kalenderen</a>
+          <button class="admin-trigger inbox-trigger" id="inboxTrigger" type="button" hidden>
+            Inbox
+          </button>
           <button class="admin-trigger" id="adminTrigger" type="button">Admin-innlogging</button>
         </div>
       </nav>
@@ -37,7 +40,7 @@
         <h1>Elias Julekalender</h1>
         <p class="hero-copy">
           Spinn et stilhjul og et julesanghjul, få en vill kombinasjon, og send
-          ideen rett til Elias som ferdigutfylt e-post.
+          ideen rett inn i Elias sin admin-inbox.
         </p>
         <div class="hero-actions">
           <button class="primary-action" type="button" data-scroll-target="#challenge">
@@ -126,7 +129,7 @@
             </p>
           </div>
 
-          <form class="mail-form" id="challengeForm">
+          <form class="submission-form" id="challengeForm">
             <label for="nameInput">Navn</label>
             <input
               id="nameInput"
@@ -219,7 +222,28 @@
             <button class="ghost-button" id="cancelDoorEditor" type="button">Avbryt</button>
           </div>
         </form>
+        <button class="ghost-button inbox-open-button" id="openInboxFromPanel" type="button">
+          Åpne inbox
+        </button>
         <button class="logout-button" id="logoutButton" type="button">Logg ut</button>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="inboxModal" hidden>
+      <section class="modal-card inbox-card" role="dialog" aria-modal="true" aria-labelledby="inboxTitle">
+        <button class="modal-close" id="closeInboxModal" type="button" aria-label="Lukk inbox">×</button>
+        <p class="eyebrow">Admin-inbox</p>
+        <h2 id="inboxTitle">Innsendte ideer</h2>
+        <p class="modal-note">
+          Dette er en lokal frontend-inbox. Innsendinger lagres i denne nettleseren med localStorage.
+        </p>
+        <div class="inbox-toolbar">
+          <span class="inbox-count" id="inboxCount">0 innsendinger</span>
+          <button class="ghost-button danger compact" id="clearInboxButton" type="button">
+            Tøm inbox
+          </button>
+        </div>
+        <div class="inbox-list" id="inboxList" aria-live="polite"></div>
       </section>
     </div>
 
@@ -228,10 +252,11 @@
     <footer class="footer">
       <p>
         Gratis statisk nettside uten backend, cookies, database eller betalte
-        tjenester. E-post sendes via brukerens eget e-postprogram.
+        tjenester. Admin-data lagres lokalt i nettleseren.
       </p>
     </footer>
 
     <script src="script.js"></script>
+    <script src="inbox.js"></script>
   </body>
 </html>
