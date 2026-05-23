@@ -1,9 +1,237 @@
 <!doctype html>
 <html lang="no">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>god jul</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Elias Julekalender er en gratis, interaktiv musikk-julekalender med julete lykkehjul."
+    />
+    <title>Elias Julekalender</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>god jul</body>
+  <body>
+    <div class="snow-layer" aria-hidden="true"></div>
+    <div class="spark-layer" aria-hidden="true"></div>
+
+    <header class="hero" id="top">
+      <nav class="topbar" aria-label="Hovednavigasjon">
+        <a class="brand" href="#top" aria-label="Elias Julekalender hjem">
+          <span class="brand-mark" aria-hidden="true">✶</span>
+          <span>Elias Julekalender</span>
+        </a>
+        <div class="nav-actions">
+          <a class="nav-link" href="#challenge">Innsending</a>
+          <a class="nav-link" href="#calendar">Kalenderen</a>
+          <button class="admin-trigger" id="adminTrigger" type="button">Admin-innlogging</button>
+        </div>
+      </nav>
+
+      <div class="hero-inner">
+        <div class="hero-decor" aria-hidden="true">
+          <span>✦</span>
+          <span>✶</span>
+          <span>★</span>
+        </div>
+        <p class="eyebrow">Interaktiv musikk-julekalender</p>
+        <h1>Elias Julekalender</h1>
+        <p class="hero-copy">
+          Spinn et stilhjul og et julesanghjul, få en vill kombinasjon, og send
+          ideen rett til Elias som ferdigutfylt e-post.
+        </p>
+        <div class="hero-actions">
+          <button class="primary-action" type="button" data-scroll-target="#challenge">
+            Start innsendingen
+          </button>
+          <button class="secondary-action" type="button" data-scroll-target="#calendar">
+            Til kalenderen
+          </button>
+        </div>
+      </div>
+
+      <div class="garland" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </header>
+
+    <main>
+      <div class="ornament-row" aria-hidden="true">
+        <span>✦</span><span>★</span><span>✶</span><span>✦</span><span>★</span>
+      </div>
+
+      <section class="challenge-shell" id="challenge" aria-labelledby="challenge-title">
+        <div class="section-heading">
+          <p class="eyebrow">Luke 24, men med mer kaos</p>
+          <h2 id="challenge-title">Velg stilkategori</h2>
+          <p>
+            Julesang-hjulet er alltid med. Velg ett ekstra hjul som bestemmer
+            hvilken retning Elias skal ta produksjonen i.
+          </p>
+        </div>
+
+        <div class="category-grid" id="categoryGrid" aria-label="Velg stilkategori"></div>
+
+        <div class="wheel-stage">
+          <article class="wheel-panel style-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="kicker">Steg 1</p>
+                <h3 id="styleWheelTitle">Sjanger-hjul</h3>
+              </div>
+              <span class="result-pill" id="styleResultPill">Ikke spunnet</span>
+            </div>
+            <div class="wheel-wrap">
+              <div class="pointer" aria-hidden="true"></div>
+              <div class="wheel-rotor" id="styleWheelRotor">
+                <div class="wheel-shadow"></div>
+                <svg class="wheel" id="styleWheel" viewBox="0 0 100 100" role="img"></svg>
+                <div class="wheel-center" aria-hidden="true">★</div>
+              </div>
+            </div>
+            <div class="wheel-list" id="styleWheelList" aria-label="Innhold i valgt stilhjul"></div>
+            <button class="spin-button" id="spinStyle" type="button">Spinn stilhjulet</button>
+          </article>
+
+          <article class="wheel-panel song-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="kicker">Steg 2</p>
+                <h3>Julesang-hjul</h3>
+              </div>
+              <span class="result-pill" id="songResultPill">Venter på stil</span>
+            </div>
+            <div class="wheel-wrap">
+              <div class="pointer" aria-hidden="true"></div>
+              <div class="wheel-rotor" id="songWheelRotor">
+                <div class="wheel-shadow"></div>
+                <svg class="wheel" id="songWheel" viewBox="0 0 100 100" role="img"></svg>
+                <div class="wheel-center" aria-hidden="true">♫</div>
+              </div>
+            </div>
+            <div class="wheel-list" id="songWheelList" aria-label="Innhold i julesang-hjulet"></div>
+            <button class="spin-button" id="spinSong" type="button" disabled>
+              Spinn julesang-hjulet
+            </button>
+          </article>
+        </div>
+
+        <section class="result-panel" id="resultPanel" aria-live="polite">
+          <div>
+            <p class="kicker">Resultat</p>
+            <h2 id="challengeText">Spinn hjulene og send ideen til Elias.</h2>
+            <p id="summaryText">
+              Venner kan sende inn kombinasjoner som Elias kan gjøre om til
+              korte julevideoer i kalenderen.
+            </p>
+          </div>
+
+          <form class="mail-form" id="challengeForm">
+            <label for="nameInput">Navn</label>
+            <input
+              id="nameInput"
+              name="name"
+              type="text"
+              autocomplete="name"
+              placeholder="Hvem sender ideen?"
+            />
+
+            <label for="commentInput">Kommentar/ønske</label>
+            <textarea
+              id="commentInput"
+              name="comment"
+              rows="4"
+              placeholder="Legg til et ønske, en punchline eller en streng beskjed om bjeller."
+            ></textarea>
+
+            <button class="send-button" id="sendButton" type="submit" disabled>
+              Send ideen til Elias
+            </button>
+          </form>
+        </section>
+      </section>
+
+      <section class="calendar-section" id="calendar" aria-labelledby="calendar-title">
+        <div class="section-heading calendar-heading">
+          <p class="eyebrow">Julekalender-bibliotek</p>
+          <h2 id="calendar-title">24 luker med videoer fra Elias</h2>
+          <p>
+            Her kan kalenderen fylles med ferdige videoer eller lenker senere.
+            Foreløpig ligger alle lukene klare og venter på desember.
+          </p>
+        </div>
+        <div class="calendar-grid" id="calendarGrid" aria-label="24 kalenderluker"></div>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" id="adminLoginModal" hidden>
+      <section class="modal-card admin-login-card" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle">
+        <button class="modal-close" id="closeLoginModal" type="button" aria-label="Lukk admin-innlogging">×</button>
+        <p class="eyebrow">Frontend-admin</p>
+        <h2 id="adminLoginTitle">Admin-innlogging</h2>
+        <p class="modal-note">
+          Dette er en enkel lokal admin for privat bruk, ikke en sikker serverinnlogging.
+        </p>
+        <form class="admin-form" id="adminLoginForm">
+          <label for="adminUsername">Brukernavn</label>
+          <input id="adminUsername" name="adminUsername" type="text" autocomplete="username" />
+
+          <label for="adminPassword">Passord</label>
+          <input id="adminPassword" name="adminPassword" type="password" autocomplete="current-password" />
+
+          <p class="form-error" id="adminLoginError" aria-live="polite"></p>
+          <button class="send-button" type="submit">Logg inn</button>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="adminPanelModal" hidden>
+      <section class="modal-card admin-panel-card" role="dialog" aria-modal="true" aria-labelledby="adminPanelTitle">
+        <button class="modal-close" id="closeAdminPanel" type="button" aria-label="Lukk adminpanel">×</button>
+        <p class="eyebrow">Adminpanel</p>
+        <h2 id="adminPanelTitle">Rediger kalenderluke</h2>
+        <p class="modal-note" id="doorEditorNote">
+          Velg en luke i kalenderen for å legge inn eller endre lenke.
+        </p>
+        <form class="admin-form" id="doorEditorForm">
+          <input id="doorNumberInput" type="hidden" />
+
+          <label for="doorUrlInput">URL</label>
+          <input
+            id="doorUrlInput"
+            name="doorUrlInput"
+            type="url"
+            placeholder="https://www.youtube.com/watch?v=..."
+          />
+
+          <label for="doorTitleInput">Tittel, valgfritt</label>
+          <input
+            id="doorTitleInput"
+            name="doorTitleInput"
+            type="text"
+            placeholder="F.eks. Elias luke 1"
+          />
+
+          <p class="form-error" id="doorEditorError" aria-live="polite"></p>
+          <div class="modal-actions">
+            <button class="send-button" type="submit">Lagre</button>
+            <button class="ghost-button danger" id="removeDoorLink" type="button">Fjern lenke</button>
+            <button class="ghost-button" id="cancelDoorEditor" type="button">Avbryt</button>
+          </div>
+        </form>
+        <button class="logout-button" id="logoutButton" type="button">Logg ut</button>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <footer class="footer">
+      <p>
+        Gratis statisk nettside uten backend, cookies, database eller betalte
+        tjenester. E-post sendes via brukerens eget e-postprogram.
+      </p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
 </html>
