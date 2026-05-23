@@ -1,30 +1,57 @@
-// Fallback-inbox for the deployed static site. If script.js already contains
-// native inbox support, this file exits quietly to avoid double-handling.
-if (!window.ELIAS_INBOX_NATIVE) {
+// Deployed fallback for the static GitHub Pages version.
+// If script.js already has native inbox support, this file only applies the visual CSS repair.
+(() => {
   const SUBMISSION_KEY = "eliasJulekalenderSubmissions";
   const ADMIN_SESSION_KEY = "eliasJulekalenderAdminSession";
 
-  const inboxDom = {
-    trigger: document.querySelector("#inboxTrigger"),
-    modal: document.querySelector("#inboxModal"),
-    close: document.querySelector("#closeInboxModal"),
-    list: document.querySelector("#inboxList"),
-    count: document.querySelector("#inboxCount"),
-    clear: document.querySelector("#clearInboxButton"),
-    form: document.querySelector("#challengeForm"),
-    name: document.querySelector("#nameInput"),
-    comment: document.querySelector("#commentInput"),
-    styleResult: document.querySelector("#styleResultPill"),
-    songResult: document.querySelector("#songResultPill"),
-    styleTitle: document.querySelector("#styleWheelTitle"),
-    loginForm: document.querySelector("#adminLoginForm"),
-    logout: document.querySelector("#logoutButton"),
-    openFromPanel: document.querySelector("#openInboxFromPanel"),
-    toast: document.querySelector("#toast"),
-    sparkLayer: document.querySelector(".spark-layer")
+  repairDeployedStyles();
+
+  if (window.ELIAS_INBOX_NATIVE) return;
+
+  const $ = (selector) => document.querySelector(selector);
+  const dom = {
+    trigger: $("#inboxTrigger"),
+    modal: $("#inboxModal"),
+    close: $("#closeInboxModal"),
+    list: $("#inboxList"),
+    count: $("#inboxCount"),
+    clear: $("#clearInboxButton"),
+    form: $("#challengeForm"),
+    name: $("#nameInput"),
+    comment: $("#commentInput"),
+    styleResult: $("#styleResultPill"),
+    songResult: $("#songResultPill"),
+    styleTitle: $("#styleWheelTitle"),
+    loginForm: $("#adminLoginForm"),
+    logout: $("#logoutButton"),
+    openFromPanel: $("#openInboxFromPanel"),
+    toast: $("#toast"),
+    sparkLayer: $(".spark-layer")
   };
 
-  function escapeInboxHtml(value) {
+  if (!dom.form || !dom.trigger || !dom.modal) return;
+
+  function repairDeployedStyles() {
+    fetch(`styles.css?repair=${Date.now()}`, { cache: "no-store" })
+      .then((response) => response.ok ? response.text() : "")
+      .then((css) => {
+        const fixed = css
+          .replace("margin:-bottom: 1.4rem;", "margin-bottom: 1.4rem;")
+          .replace(
+            "linear-gradient(135deg, rgba(255, 255, 255, 0.44), rgba(255, 248, 231, 0.44),\n    repeating-linear-gradient",
+            "linear-gradient(135deg, rgba(255, 255, 255, 0.44), rgba(255, 248, 231, 0.44)),\n    repeating-linear-gradient"
+          );
+
+        if (!fixed || fixed === css || document.querySelector("#elias-css-repair")) return;
+        const style = document.createElement("style");
+        style.id = "elias-css-repair";
+        style.textContent = fixed;
+        document.head.append(style);
+      })
+      .catch(() => {});
+  }
+
+  function escapeHtml(value) {
     return String(value)
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
@@ -33,7 +60,7 @@ if (!window.ELIAS_INBOX_NATIVE) {
       .replaceAll("'", "&#039;");
   }
 
-  function loadInboxSubmissions() {
+  function loadSubmissions() {
     try {
       const submissions = JSON.parse(localStorage.getItem(SUBMISSION_KEY)) || [];
       return Array.isArray(submissions) ? submissions : [];
@@ -42,57 +69,62 @@ if (!window.ELIAS_INBOX_NATIVE) {
     }
   }
 
-  function saveInboxSubmissions(submissions) {
+  function saveSubmissions(submissions) {
     localStorage.setItem(SUBMISSION_KEY, JSON.stringify(submissions));
   }
 
-  function isInboxAdmin() {
+  function isAdmin() {
     return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
   }
 
-  function showInboxToast(message) {
-    if (!inboxDom.toast) return;
-    inboxDom.toast.textContent = message;
-    inboxDom.toast.classList.add("is-visible");
-    window.clearTimeout(showInboxToast.timeoutId);
-    showInboxToast.timeoutId = window.setTimeout(() => {
-      inboxDom.toast.classList.remove("is-visible");
+  function showToast(message) {
+    if (!dom.toast) return;
+    dom.toast.textContent = message;
+    dom.toast.classList.add("is-visible");
+    window.clearTimeout(showToast.timeoutId);
+    showToast.timeoutId = window.setTimeout(() => {
+      dom.toast.classList.remove("is-visible");
     }, 2600);
   }
 
-  function openInboxModal() {
+  function openModal() {
     renderInbox();
-    inboxDom.modal.hidden = false;
-    requestAnimationFrame(() => inboxDom.modal.classList.add("is-open"));
+    dom.modal.hidden = false;
+    requestAnimationFrame(() => dom.modal.classList.add("is-open"));
   }
 
-  function closeInboxModal() {
-    inboxDom.modal.classList.remove("is-open");
+  function closeModal() {
+    dom.modal.classList.remove("is-open");
     window.setTimeout(() => {
-      inboxDom.modal.hidden = true;
+      dom.modal.hidden = true;
     }, 180);
   }
 
-  function formatInboxDate(value) {
-    return new Intl.DateTimeFormat("no-NO", {
-      dateStyle: "medium",
-      timeStyle: "short"
-    }).format(new Date(value));
+  function formatDate(value) {
+    try {
+      return new Intl.DateTimeFormat("no-NO", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      }).format(new Date(value));
+    } catch {
+      return "Ukjent tidspunkt";
+    }
   }
 
   function updateInboxButton() {
-    const count = loadInboxSubmissions().length;
-    inboxDom.trigger.hidden = !isInboxAdmin();
-    inboxDom.trigger.textContent = count > 0 ? `Inbox (${count})` : "Inbox";
-    inboxDom.count.textContent = count === 1 ? "1 innsending" : `${count} innsendinger`;
-    inboxDom.clear.disabled = count === 0;
+    const count = loadSubmissions().length;
+    dom.trigger.hidden = !isAdmin();
+    dom.trigger.textContent = count > 0 ? `Inbox (${count})` : "Inbox";
+    if (dom.count) dom.count.textContent = count === 1 ? "1 innsending" : `${count} innsendinger`;
+    if (dom.clear) dom.clear.disabled = count === 0;
   }
 
   function renderInbox() {
-    const submissions = loadInboxSubmissions();
+    const submissions = loadSubmissions();
     updateInboxButton();
+
     if (!submissions.length) {
-      inboxDom.list.innerHTML = `
+      dom.list.innerHTML = `
         <div class="inbox-empty">
           <strong>Ingen innsendinger ennå.</strong>
           <p>Når noen sender inn fra denne nettleseren, dukker ideene opp her.</p>
@@ -101,101 +133,103 @@ if (!window.ELIAS_INBOX_NATIVE) {
       return;
     }
 
-    inboxDom.list.innerHTML = submissions
-      .map((submission) => `
-        <article class="inbox-item">
-          <div class="inbox-item-header">
-            <div>
-              <strong>${escapeInboxHtml(submission.name)}</strong>
-              <span>${escapeInboxHtml(formatInboxDate(submission.createdAt))}</span>
-            </div>
-            <button class="ghost-button danger compact" type="button" data-delete-submission="${escapeInboxHtml(submission.id)}">Slett</button>
+    dom.list.innerHTML = submissions.map((submission) => `
+      <article class="inbox-item">
+        <div class="inbox-item-header">
+          <div>
+            <strong>${escapeHtml(submission.name)}</strong>
+            <span>${escapeHtml(formatDate(submission.createdAt))}</span>
           </div>
-          <p class="inbox-idea">${escapeInboxHtml(submission.fullIdea)}</p>
-          <dl class="inbox-meta">
-            <div><dt>Valgt hjul</dt><dd>${escapeInboxHtml(submission.categoryTitle)}</dd></div>
-            <div><dt>Stilresultat</dt><dd>${escapeInboxHtml(submission.styleResult)}</dd></div>
-            <div><dt>Julesang</dt><dd>${escapeInboxHtml(submission.songResult)}</dd></div>
-          </dl>
-          <p class="inbox-comment">${escapeInboxHtml(submission.comment)}</p>
-        </article>
-      `)
-      .join("");
+          <button class="ghost-button danger compact" type="button" data-delete-submission="${escapeHtml(submission.id)}">Slett</button>
+        </div>
+        <p class="inbox-idea">${escapeHtml(submission.fullIdea)}</p>
+        <dl class="inbox-meta">
+          <div><dt>Valgt hjul</dt><dd>${escapeHtml(submission.categoryTitle)}</dd></div>
+          <div><dt>Stilresultat</dt><dd>${escapeHtml(submission.styleResult)}</dd></div>
+          <div><dt>Julesang</dt><dd>${escapeHtml(submission.songResult)}</dd></div>
+        </dl>
+        <p class="inbox-comment">${escapeHtml(submission.comment)}</p>
+      </article>
+    `).join("");
   }
 
-  function addInboxConfetti() {
-    if (!inboxDom.sparkLayer) return;
-    inboxDom.sparkLayer.insertAdjacentHTML(
+  function addConfetti() {
+    if (!dom.sparkLayer) return;
+    const colors = ["#f5bf42", "#b11226", "#0f6b3a", "#ffffff"];
+    dom.sparkLayer.insertAdjacentHTML(
       "beforeend",
-      Array.from({ length: 36 })
-        .map(() => {
-          const color = ["#f5bf42", "#b11226", "#0f6b3a", "#ffffff"][Math.floor(Math.random() * 4)];
-          return `<span class="confetti" style="--x:${Math.random() * 100}vw; --dx:${-120 + Math.random() * 240}px; background:${color}"></span>`;
-        })
-        .join("")
+      Array.from({ length: 36 }, () => {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return `<span class="confetti" style="--x:${Math.random() * 100}vw; --dx:${-120 + Math.random() * 240}px; background:${color}"></span>`;
+      }).join("")
     );
     window.setTimeout(() => {
-      inboxDom.sparkLayer.innerHTML = "";
+      dom.sparkLayer.innerHTML = "";
     }, 2400);
   }
 
-  function saveInboxSubmission(event) {
-    const styleResult = inboxDom.styleResult.textContent.trim();
-    const songResult = inboxDom.songResult.textContent.trim();
-    if (!styleResult || !songResult || styleResult === "Ikke spunnet" || songResult === "Klar til spinn" || songResult === "Venter på stil") {
-      return;
-    }
+  function saveSubmission(event) {
+    const styleResult = dom.styleResult.textContent.trim();
+    const songResult = dom.songResult.textContent.trim();
+    const hasResults = styleResult &&
+      songResult &&
+      styleResult !== "Ikke spunnet" &&
+      songResult !== "Klar til spinn" &&
+      songResult !== "Venter på stil";
+
+    if (!hasResults) return;
 
     event.preventDefault();
     event.stopImmediatePropagation();
 
     const fullIdea = `Lag ${songResult} i stil med ${styleResult}.`;
-    const submissions = loadInboxSubmissions();
+    const submissions = loadSubmissions();
     submissions.unshift({
       id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       createdAt: new Date().toISOString(),
-      name: inboxDom.name.value.trim() || "Anonym juleutfordrer",
-      comment: inboxDom.comment.value.trim() || "Ingen kommentar",
-      categoryTitle: inboxDom.styleTitle.textContent.trim(),
+      name: dom.name.value.trim() || "Anonym juleutfordrer",
+      comment: dom.comment.value.trim() || "Ingen kommentar",
+      categoryTitle: dom.styleTitle.textContent.trim(),
       styleResult,
       songResult,
       fullIdea
     });
-    saveInboxSubmissions(submissions);
-    inboxDom.form.reset();
+
+    saveSubmissions(submissions);
+    dom.form.reset();
     updateInboxButton();
-    addInboxConfetti();
-    showInboxToast("Ideen er lagret i admin-inboxen på denne nettleseren.");
+    addConfetti();
+    showToast("Ideen er lagret i admin-inboxen på denne nettleseren.");
   }
 
-  inboxDom.form.addEventListener("submit", saveInboxSubmission, true);
-  inboxDom.trigger.addEventListener("click", () => {
-    if (isInboxAdmin()) openInboxModal();
+  dom.form.addEventListener("submit", saveSubmission, true);
+  dom.trigger.addEventListener("click", () => {
+    if (isAdmin()) openModal();
   });
-  inboxDom.openFromPanel.addEventListener("click", () => {
-    if (isInboxAdmin()) openInboxModal();
+  dom.openFromPanel?.addEventListener("click", () => {
+    if (isAdmin()) openModal();
   });
-  inboxDom.close.addEventListener("click", closeInboxModal);
-  inboxDom.modal.addEventListener("click", (event) => {
-    if (event.target === inboxDom.modal) closeInboxModal();
+  dom.close?.addEventListener("click", closeModal);
+  dom.modal.addEventListener("click", (event) => {
+    if (event.target === dom.modal) closeModal();
   });
-  inboxDom.list.addEventListener("click", (event) => {
+  dom.list.addEventListener("click", (event) => {
     const button = event.target.closest("[data-delete-submission]");
-    if (!button || !isInboxAdmin()) return;
-    saveInboxSubmissions(loadInboxSubmissions().filter((item) => item.id !== button.dataset.deleteSubmission));
+    if (!button || !isAdmin()) return;
+    saveSubmissions(loadSubmissions().filter((item) => item.id !== button.dataset.deleteSubmission));
     renderInbox();
-    showInboxToast("Innsendingen er slettet.");
+    showToast("Innsendingen er slettet.");
   });
-  inboxDom.clear.addEventListener("click", () => {
-    if (!isInboxAdmin()) return;
-    saveInboxSubmissions([]);
+  dom.clear?.addEventListener("click", () => {
+    if (!isAdmin()) return;
+    saveSubmissions([]);
     renderInbox();
-    showInboxToast("Inboxen er tømt.");
+    showToast("Inboxen er tømt.");
   });
-  inboxDom.loginForm.addEventListener("submit", () => window.setTimeout(updateInboxButton, 250));
-  inboxDom.logout.addEventListener("click", () => window.setTimeout(updateInboxButton, 250));
+  dom.loginForm?.addEventListener("submit", () => window.setTimeout(updateInboxButton, 250));
+  dom.logout?.addEventListener("click", () => window.setTimeout(updateInboxButton, 250));
   window.addEventListener("storage", updateInboxButton);
 
   updateInboxButton();
   renderInbox();
-}
+})();
